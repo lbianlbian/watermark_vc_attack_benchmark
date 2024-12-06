@@ -6,3 +6,6 @@ torch==1.11.0+cu113
 torchaudio==0.11.0+cu113
 tqdm==4.62.3
 transformers==4.35.0
+audioseal==0.1.4
+wavmark==0.0.3
+soundfile==0.12.1

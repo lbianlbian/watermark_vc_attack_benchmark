@@ -1,6 +1,5 @@
 import os
 import torch
-import argparse 
 import tqdm
 import numpy as np 
 from glob import glob
@@ -17,7 +16,7 @@ from model.diffhiervc import DiffHierVC, Wav2vec2
 from utils.utils import MelSpectrogramFixed
 
 h = None
-device = None
+
 seed = 1234
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)      
@@ -113,28 +112,36 @@ def inference(a):
     f_name = f'{src_name}_to_{trg_name}.wav' 
     out = os.path.join(a.output_dir, f_name)
     save_audio(converted_audio, out)   
+    return out
 
+class BenchmarkArgs():
+    def __init__(self, src_path, trg_path):
+        '''
+        This sets the arguments to run inference for the benchmark
+        param: src_path, str, path to the watermarked audio file to attack
+        param: trg_path, str, path to the audio file with the target speaker timbre
+        '''
+        self.src_path = src_path
+        self.trg_path = trg_path
+        self.ckpt_model = './ckpt/model_diffhier.pth'
+        self.voc = 'bigvgan' 
+        self.ckpt_voc = './vocoder/voc_bigvgan.pth'  
+        self.output_dir = './tmp' 
+        self.diffpitch_ts = 30
+        self.diffvoice_ts = 6  
 
-def main(): 
+def main(src_path, trg_path): 
+    '''
+    starts the inference process
+    param: src_path, str, path to the watermarked audio file to attack
+    param: trg_path, str, path to the audio file with the target speaker timbre
+    '''
     print('>> Initializing Inference Process...')
-     
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--src_path', type=str, default='/workspace/ha0/data/src.wav')  
-    parser.add_argument('--trg_path', type=str, default='/workspace/ha0/data/tar.wav')  
-    parser.add_argument('--ckpt_model', type=str, default='./ckpt/model_diffhier.pth')
-    parser.add_argument('--voc', type=str, default='bigvgan')  
-    parser.add_argument('--ckpt_voc', type=str, default='./vocoder/voc_bigvgan.pth')  
-    parser.add_argument('--output_dir', '-o', type=str, default='./converted') 
-    parser.add_argument('--diffpitch_ts', '-dpts', type=int, default=30) 
-    parser.add_argument('--diffvoice_ts', '-dvts', type=int, default=6)  
-    
+
     global hps, hps_voc, device, a 
-    a = parser.parse_args()
+    a = BenchmarkArgs(src_path, trg_path)
     config = os.path.join(os.path.split(a.ckpt_model)[0], 'config_bigvgan.json')  
     hps = utils.get_hparams_from_file(config) 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
-    inference(a)
-
-if __name__ == '__main__':
-    main()
+    return inference(a)

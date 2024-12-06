@@ -1,3 +1,9 @@
+# This repository builds a dataset benchmarking the robustness of various generative audio watermarkers under various attacks with voice converter models.
+
+## It is designed to be easy to extend with new voice converter attacks or new watermarking schemes.
+
+attacks.py contains the classes for an attack. handle_watermark.py contains wrapper classes for watermarks to test. Change the constants declared at the top of main.py to configure the dataset being sampled from, or the attacks being run, or the watermarks being tested. 
+
 ##  Diff-HierVC: Diffusion-based Hierarchical Voice Conversion with Robust Pitch Generation and Masked Prior for Zero-shot Speaker Adaptation  <a src="https://img.shields.io/badge/cs.CV-2311.04693-b31b1b?logo=arxiv&logoColor=red" href="http://arxiv.org/abs/2311.04693"> <img src="https://img.shields.io/badge/cs.CV-2311.04693-b31b1b?logo=arxiv&logoColor=red">
 
 The official Pytorch implementation of Diff-HierVC (Interspeeh 2023, Oral)
